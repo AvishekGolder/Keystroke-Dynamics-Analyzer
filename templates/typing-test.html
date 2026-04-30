@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEURO-SYNCH | Typing Test Mode</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/typing-test.css') }}">
+</head>
+<body>
+    <!-- Neural Grid Background -->
+    <div class="neural-grid"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="logo">
+                        <span class="logo-icon">🧠</span>
+                        NEURO-SYNCH
+                        <span class="version">TEST MODE</span>
+                    </h1>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="/" class="btn btn-outline-primary btn-sm">← Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mt-5">
+        
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen-container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card neuro-card text-center">
+                        <div class="card-body p-5">
+                            <h2 class="display-4 mb-4">⌨️ Neural Typing Test</h2>
+                            <p class="lead mb-4">
+                                Test your typing speed while we analyze your neurological patterns in real-time
+                            </p>
+                            
+                            <!-- Test Mode Selection -->
+                            <div class="test-mode-selector mb-4">
+                                <h4 class="mb-3">Select Test Mode</h4>
+                                <div class="btn-group" role="group">
+                                    <input type="radio" class="btn-check" name="testMode" id="mode15" value="15" checked>
+                                    <label class="btn btn-outline-primary" for="mode15">15 Seconds</label>
+                                    
+                                    <input type="radio" class="btn-check" name="testMode" id="mode30" value="30">
+                                    <label class="btn btn-outline-primary" for="mode30">30 Seconds</label>
+                                    
+                                    <input type="radio" class="btn-check" name="testMode" id="mode60" value="60">
+                                    <label class="btn btn-outline-primary" for="mode60">60 Seconds</label>
+                                    
+                                    <input type="radio" class="btn-check" name="testMode" id="mode120" value="120">
+                                    <label class="btn btn-outline-primary" for="mode120">2 Minutes</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Text Type Selection -->
+                            <div class="text-type-selector mb-4">
+                                <h4 class="mb-3">Text Type</h4>
+                                <div class="btn-group" role="group">
+                                    <input type="radio" class="btn-check" name="textType" id="typeWords" value="words" checked>
+                                    <label class="btn btn-outline-secondary" for="typeWords">Random Words</label>
+                                    
+                                    <input type="radio" class="btn-check" name="textType" id="typeSentences" value="sentences">
+                                    <label class="btn btn-outline-secondary" for="typeSentences">Sentences</label>
+                                </div>
+                            </div>
+                            
+                            <button id="startTestBtn" class="btn btn-primary btn-lg mt-4">
+                                🚀 Start Test
+                            </button>
+                            
+                            <div class="mt-4">
+                                <small class="text-muted">
+                                    <strong>Instructions:</strong> Type the words shown as quickly and accurately as possible. 
+                                    Press Tab to restart. Your neurological patterns will be analyzed in real-time.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typing Test Screen -->
+        <div id="testScreen" class="screen-container" style="display: none;">
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-10">
+                    <!-- Timer and Stats Bar -->
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <span class="stat-label">Time</span>
+                            <span class="stat-value" id="timer">60</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">WPM</span>
+                            <span class="stat-value" id="liveWPM">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Accuracy</span>
+                            <span class="stat-value" id="liveAccuracy">100%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Keystrokes</span>
+                            <span class="stat-value" id="keystrokeCounter">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- Typing Area -->
+                    <div class="card neuro-card typing-test-card">
+                        <div class="card-body p-4">
+                            <!-- Target Text Display -->
+                            <div id="targetTextDisplay" class="target-text-display"></div>
+                            
+                            <!-- Input Area (hidden but captures keystrokes) -->
+                            <input type="text" id="typingInput" class="typing-test-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                            
+                            <!-- Focus Prompt -->
+                            <div id="focusPrompt" class="focus-prompt">
+                                Click here to start typing
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Live Neuro Feedback -->
+                    <div class="card neuro-card mt-4">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <span class="icon">🧠</span>
+                                Live Neural Analysis
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <canvas id="miniWaveform" width="400" height="100"></canvas>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="liveNeuroFeedback" class="live-feedback">
+                                        <div class="feedback-item">
+                                            <span class="feedback-label">Rhythm Stability:</span>
+                                            <span class="feedback-value">--</span>
+                                        </div>
+                                        <div class="feedback-item">
+                                            <span class="feedback-label">Cognitive Load:</span>
+                                            <span class="feedback-value">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="screen-container" style="display: none;">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card neuro-card">
+                        <div class="card-header text-center">
+                            <h2 class="display-5 mb-0">📊 Your Neural Performance Report</h2>
+                        </div>
+                        <div class="card-body p-5">
+                            
+                            <!-- Main Performance Metrics -->
+                            <div class="row mb-5">
+                                <div class="col-md-3">
+                                    <div class="result-metric">
+                                        <div class="metric-icon">⚡</div>
+                                        <div class="metric-value" id="resultWPM">--</div>
+                                        <div class="metric-label">Words Per Minute</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="result-metric">
+                                        <div class="metric-icon">🎯</div>
+                                        <div class="metric-value" id="resultAccuracy">--</div>
+                                        <div class="metric-label">Accuracy</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="result-metric">
+                                        <div class="metric-icon">📊</div>
+                                        <div class="metric-value" id="resultConsistency">--</div>
+                                        <div class="metric-label">Consistency</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="result-metric">
+                                        <div class="metric-icon">🏆</div>
+                                        <div class="metric-value" id="resultGrade">--</div>
+                                        <div class="metric-label">Grade</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Performance Level -->
+                            <div class="performance-level-banner mb-4" id="performanceLevel">
+                                <h3>Performance Level</h3>
+                                <p class="mb-0">--</p>
+                            </div>
+
+                            <!-- Neurological Insights -->
+                            <div class="neuro-insights-section mb-4">
+                                <h4 class="mb-3">🧠 Neurological Insights</h4>
+                                <div id="neuroInsightsList"></div>
+                            </div>
+
+                            <!-- Detailed Stats -->
+                            <div class="detailed-stats mb-4">
+                                <h4 class="mb-3">📈 Detailed Statistics</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul class="stats-list">
+                                            <li>
+                                                <span>Correct Characters:</span>
+                                                <strong id="correctChars">--</strong>
+                                            </li>
+                                            <li>
+                                                <span>Total Characters:</span>
+                                                <strong id="totalChars">--</strong>
+                                            </li>
+                                            <li>
+                                                <span>Error Rate:</span>
+                                                <strong id="errorRate">--</strong>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="stats-list">
+                                            <li>
+                                                <span>Time Taken:</span>
+                                                <strong id="timeTaken">--</strong>
+                                            </li>
+                                            <li>
+                                                <span>Neuro-Health Index:</span>
+                                                <strong id="nhiResult">--</strong>
+                                            </li>
+                                            <li>
+                                                <span>Cognitive Load:</span>
+                                                <strong id="cognitiveLoadResult">--</strong>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="text-center mt-5">
+                                <button id="retryTestBtn" class="btn btn-primary btn-lg me-3">
+                                    🔄 Try Again
+                                </button>
+                                <button id="shareResultsBtn" class="btn btn-secondary btn-lg me-3">
+                                    📤 Share Results
+                                </button>
+                                <a href="/" class="btn btn-outline-primary btn-lg">
+                                    🏠 Full Dashboard
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/typing-test.js') }}"></script>
+</body>
+</html>

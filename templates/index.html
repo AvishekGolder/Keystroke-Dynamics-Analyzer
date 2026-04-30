@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEURO-SYNCH 2.0 | Passive Neuro-Diagnostic Intelligence</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=IBM+Plex+Mono:wght@300;400;500&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Neural Grid Background -->
+    <div class="neural-grid"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="logo">
+                        <span class="logo-icon">🧠</span>
+                        NEURO-SYNCH
+                        <span class="version">2.0</span>
+                    </h1>
+                    <p class="tagline">Passive Biometric AI Framework for Early Neuro-Diagnostic Screening</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="status-indicator">
+                        <div class="pulse-dot"></div>
+                        <span id="systemStatus">MONITORING ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="container-fluid mt-4">
+        <div class="row">
+            <!-- Left Panel - Real-time Metrics -->
+            <div class="col-lg-8">
+                <!-- Typing Input Area -->
+                <div class="card neuro-card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="icon">⌨️</span>
+                            Neural Signal Capture Zone
+                        </h3>
+                        <div class="d-flex gap-2 align-items-center">
+                            <button class="btn btn-sm btn-success" id="loadTestBtn">
+                                🎯 Load Typing Challenge
+                            </button>
+                            <span class="badge" id="keystrokeCount">0 keystrokes</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Challenge Mode Indicator -->
+                        <div id="challengeMode" style="display: none;">
+                            <div class="alert alert-info d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <strong>🎯 Typing Challenge Active</strong>
+                                    <p class="mb-0 small">Type the text below as accurately and quickly as possible</p>
+                                </div>
+                                <div>
+                                    <span class="badge bg-primary" id="challengeTimer">60s</span>
+                                    <span class="badge bg-warning" id="challengeAccuracy">0%</span>
+                                    <span class="badge bg-info" id="challengeWPM">0 WPM</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Target Text Display -->
+                            <div id="targetTextBox" class="target-text-box mb-3"></div>
+                        </div>
+                        
+                        <textarea 
+                            id="typingArea" 
+                            class="typing-input" 
+                            placeholder="Start typing to activate neurological monitoring...
+
+You can either:
+• Free-form type to establish your baseline
+• Click 'Load Typing Challenge' for a guided test
+
+Your typing patterns are being analyzed at microsecond resolution to detect subtle neurological variations."
+                            rows="8"
+                        ></textarea>
+                        <div class="progress mt-3" style="height: 3px;">
+                            <div id="baselineProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <small id="baselineStatus" class="text-muted">Establishing baseline... 0/50 samples</small>
+                    </div>
+                </div>
+
+                <!-- Real-time Waveform Visualization -->
+                <div class="card neuro-card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="icon">📈</span>
+                            Neural Rhythm Waveform
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="waveformCanvas" width="800" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- AI Insights Panel -->
+                <div class="card neuro-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="icon">🤖</span>
+                            AI Health Assistant
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="insightsContainer" class="insights-container">
+                            <div class="insight-item initial">
+                                <div class="insight-icon">💡</div>
+                                <div class="insight-text">
+                                    Awaiting neurological data... Start typing to begin passive monitoring.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Health Metrics -->
+            <div class="col-lg-4">
+                <!-- Neuro-Health Index -->
+                <div class="card neuro-card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="icon">🎯</span>
+                            Neuro-Health Index
+                        </h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="nhi-display" id="nhiDisplay">
+                            <div class="nhi-value">--</div>
+                            <div class="nhi-label">Calibrating...</div>
+                        </div>
+                        <div class="nhi-scale">
+                            <div class="scale-segment optimal">
+                                <span>90-100</span>
+                                <small>Optimal</small>
+                            </div>
+                            <div class="scale-segment mild">
+                                <span>70-89</span>
+                                <small>Mild Load</small>
+                            </div>
+                            <div class="scale-segment elevated">
+                                <span>50-69</span>
+                                <small>Elevated Risk</small>
+                            </div>
+                            <div class="scale-segment critical">
+                                <span>0-49</span>
+                                <small>Critical</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro-Temporal Metrics -->
+                <div class="card neuro-card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="icon">⚡</span>
+                            Micro-Temporal Analysis
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-row">
+                            <div class="metric-label">Avg Dwell Time</div>
+                            <div class="metric-value" id="dwellTime">-- ms</div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-label">Avg Flight Time</div>
+                            <div class="metric-value" id="flightTime">-- ms</div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-label">Rhythm Entropy</div>
+                            <div class="metric-value" id="entropy">-- bits</div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-label">Cognitive Load</div>
+                            <div class="metric-value" id="cognitiveLoad">-- %</div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-label">Error Rate</div>
+                            <div class="metric-value" id="errorRate">-- %</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert System -->
+                <div class="card neuro-card mb-4" id="alertCard" style="display: none;">
+                    <div class="card-header alert-header">
+                        <h3 class="card-title">
+                            <span class="icon">🔔</span>
+                            Smart Alerts
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="alertContent"></div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card neuro-card">
+                    <div class="card-body">
+                        <button class="btn btn-primary btn-block mb-3" id="generateReport">
+                            📋 Generate Diagnostic Report
+                        </button>
+                        <button class="btn btn-secondary btn-block mb-3" id="resetBaseline">
+                            🔄 Reset Baseline
+                        </button>
+                        <button class="btn btn-info btn-block" id="cognitiveChallenge">
+                            🎯 Start Cognitive Challenge
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trend Analytics Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card neuro-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="icon">📊</span>
+                            Longitudinal Neuro-Trajectory
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="trendChart" width="1200" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Report Modal -->
+    <div class="modal fade" id="reportModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content neuro-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">📋 Neuro-Diagnostic Report</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="reportContent">
+                    <!-- Report will be generated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="downloadReport">Download Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cognitive Challenge Modal -->
+    <div class="modal fade" id="challengeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content neuro-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">🎯 Cognitive Load Challenge</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="challengeContent">
+                    <div class="challenge-task">
+                        <h4>Mental Math Challenge</h4>
+                        <p class="challenge-question" id="mathQuestion">Calculate: 47 × 23 = ?</p>
+                        <p class="text-muted">Continue typing in the main area while solving this mentally.</p>
+                        <p class="challenge-instruction">
+                            This dual-task scenario will increase your cognitive load, 
+                            allowing the system to measure your neural slowdown sensitivity index.
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenge Results Modal -->
+    <div class="modal fade" id="challengeResultsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content neuro-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">🏆 Challenge Complete - Your Results</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="challengeResultsContent">
+                    <!-- Results will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="newChallengeBtn">Try Another Challenge</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
